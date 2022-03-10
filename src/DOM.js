@@ -5,6 +5,12 @@
   Считаем, что всегда передается тег, допускающий вставку текста в качестве своего содержимого (P, DIV, I и пр.).
 */
 export function appendToBody(tag, content, count) {
+    for (let i = 0; i < count; i++) {
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            `<${tag}>${content}</${tag}>`,
+        );
+    }
 }
 
 /*
@@ -15,6 +21,20 @@ export function appendToBody(tag, content, count) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function generateTree(childrenCount, level) {
+    document.body.insertAdjacentHTML('beforeend', `<div class='item_1'></div>`);
+    let elementsToInsert = document.getElementsByClassName('item_1');
+    for (let i = 2; i <= level; i++) {
+        for (let elem of elementsToInsert) {
+            for (let j = 0; j < childrenCount; j++) {
+                elem.insertAdjacentHTML(
+                    'beforeend',
+                    `<div class='item_${i}'></div>`,
+                );
+            }
+        }
+        elementsToInsert = document.getElementsByClassName(`item_${i}`);
+    }
+    return document.getElementsByClassName('item_1')[0];
 }
 
 /*
@@ -26,4 +46,21 @@ export function generateTree(childrenCount, level) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function replaceNodes() {
+    generateTree(2, 3);
+
+    const elementsToChange = document.getElementsByClassName('item_2');
+
+    for (let elem of elementsToChange) {
+        const elementNew = document.createElement('section');
+        elementNew.innerHTML = elem.innerHTML;
+
+        for (let attr of elem.attributes) {
+            elementNew.setAttribute(attr.name, attr.value)
+        }
+
+        elem.before(elementNew);
+        elem.remove();
+    }
+
+    return document.getElementsByClassName('item_1')[0];
 }
